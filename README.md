@@ -23,10 +23,13 @@ The original rrepository is [netbox-vagrant git repo](https://github.com/ryanmer
 The [normal NetBox upgrade process](https://github.com/digitalocean/netbox/blob/develop/docs/installation/upgrading.md) can be followed using the instructions to Clone the Git Repository (latest master release).
 
 ### Destroy and re-deploy update
-You can also destroy your current netbox VM and create a new one. The install script will take care of installing the latest version. 
 ⚠️ You will lose all your data, only do this witha test system ⚠️
-```# vagrant destroy```
-```# vagrant up```
+
+You can also destroy your current netbox VM and create a new one. The install script will take care of installing the latest version. 
+```
+# vagrant destroy
+# vagrant up
+```
 
 ## Netbox Configuration Used
 The [NetBox installation](https://github.com/digitalocean/netbox/blob/develop/docs/installation/netbox.md) process is followed leveraging:
