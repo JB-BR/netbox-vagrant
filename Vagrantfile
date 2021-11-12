@@ -2,21 +2,20 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.hostname = "netbox-demo"
+  config.vm.box = "generic/ubuntu2104"
+  config.vm.hostname = "Netbox"
 
-  config.vm.network :forwarded_port, guest: 80, host: 8080, id: 'http'
+  # Make Netbox reachable for the host over https://localhost:4433
+  config.vm.network :forwarded_port, guest: 80, host: 8080, id: 'https'
 
-  config.vm.synced_folder "./config_files", "/vagrant"
-
-#Update VM resources below as needed
-  config.vm.provider :virtualbox do |vb|
-    vb.name = "Netbox-Demo"
-    vb.memory = 2048
-    vb.cpus = 1
-    vb.customize ["modifyvm", :id, "--ostype", "Ubuntu_64"]
-  end
-
+  # Enable provisioning with a shell script. 
   config.vm.provision :shell, path: "bootstrap.sh"
 
+  # Vagrant Tips : https://docs.microsoft.com/en-us/virtualization/community/team-blog/2017/20170706-vagrant-and-hyper-v-tips-and-tricks
+  config.vm.provider "hyperv" do |h|
+    h.enable_virtualization_extensions = true
+    h.linked_clone = true
+    h.memory = 2048
+    h.cpus = 1
+  end
 end

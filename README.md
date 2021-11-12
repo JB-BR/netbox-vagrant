@@ -2,20 +2,15 @@
 
 **Nuthshell:** Quickest NetBox install for Demo or Production(*recommended that you tweak slightly for production*).
 
-This repository houses the components needed to build [NetBox](https://github.com/digitalocean/netbox/) using [Vagrant](https://www.vagrantup.com/intro) and [VirtualBox](https://www.virtualbox.org). It is a work in progress; please submit a bug report for any issues you encounter.
+This repository houses the components needed to build [NetBox](https://github.com/digitalocean/netbox/) using [Vagrant](https://www.vagrantup.com/intro) and [Hyper-V](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v).
 
-[Vagrant Getting Started](https://www.vagrantup.com/intro/getting-started/index.html) - Quick setup requires installing VirtualBox and Vagrant (selected your supported OS in the links below).
-
-  * [VirtualBox](https://www.virtualbox.org/wiki/Downloads) - You can replace with other virtual platforms.  See Vagrant Getting Started above.
-  * [Vagrant](https://www.vagrantup.com/downloads.html)
+The original rrepository is [netbox-vagrant git repo](https://github.com/ryanmerolle/netbox-vagrant/) and uses Virtual Box instead of Hyper-V.
 
 ## Quickstart
 
-To get NetBox up and running:
-
- 1. Install Virtual Platform & Vagrant (if not installed already)
- 2. Clone [netbox-vagrant git repo](https://github.com/ryanmerolle/netbox-vagrant/) ```# git clone https://github.com/ryanmerolle/netbox-vagrant/ .``` or just download both [Vagrantfile](Vagrantfile) & [bootstrap.sh](bootstrap.sh) and place in the directory you want to launch vagrant from.
- 3. Navigate to local repo directory & start vagrant
+ 1. Enable Hyper-V and install Vagrant
+ 2. Clone [this respository](https://github.com/JB-BR/netbox-vagrant) ```# git clone https://github.com/JB-BR/netbox-vagrant .``` 
+ 3. Navigate to directory containing the repository on your local system and start vagrant
 ```# vagrant up```
  4. Log into VM (optional)
 ```# vagrant ssh```
@@ -23,14 +18,22 @@ To get NetBox up and running:
  6. (Optional) [NAPALM Config](http://netbox.readthedocs.io/en/stable/configuration/optional-settings/#napalm_username), [Email Config](http://netbox.readthedocs.io/en/stable/configuration/optional-settings/#email), [LDAP](http://netbox.readthedocs.io/en/stable/installation/ldap/)
 
 ## Upgrading
+
+### Standard Update
 The [normal NetBox upgrade process](https://github.com/digitalocean/netbox/blob/develop/docs/installation/upgrading.md) can be followed using the instructions to Clone the Git Repository (latest master release).
+
+### Destroy and re-deploy update
+You can also destroy your current netbox VM and create a new one. The install script will take care of installing the latest version. 
+⚠️ You will lose all your data, only do this witha test system ⚠️
+```# vagrant destroy```
+```# vagrant up```
 
 ## Netbox Configuration Used
 The [NetBox installation](https://github.com/digitalocean/netbox/blob/develop/docs/installation/netbox.md) process is followed leveraging:
 
 * VM Memory: 2048 (edit Vagrantfile if you would like to change)
 * VM CPUs: 1 (edit Vagrantfile if you would like to change)
-* Ubuntu Xenial64 (updated)
+* Ubuntu Hirsute Hippo 21.04 (updated)
 * Python 3 (deprecated python2)
 * GIT - Cloning the Netbox latest master release from github (as opposed to downloading a tar of a particular release)
 * Ngnix (deprecated Apache)
@@ -50,4 +53,4 @@ The [NetBox installation](https://github.com/digitalocean/netbox/blob/develop/do
  * [NetBox-discuss mailing list](https://groups.google.com/forum/#!forum/netbox-discuss)
  * [NAPALM Github page](https://github.com/napalm-automation/napalm/)
  * [NAPALM Read the Docs](https://napalm.readthedocs.io/)
- * [Join the Network to Code community on Slack](https://networktocode.herokuapp.com) - Once setup join the **#netbox** room for help.  I'm **ryanmerolle** & usually in this slack room.
+ * [Join the Network to Code community on Slack](https://networktocode.herokuapp.com)
