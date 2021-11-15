@@ -155,7 +155,7 @@ chown -R www-data /opt/netbox/netbox/media/image-attachments/
 # Status Complete
 read -r CURRENTHOST _ < <(hostname -I)
 
-printf "\n\n COMPLETE: NetBox-Demo Provisioning COMPLETE!!"
-printf "\n\n To login to the Vagrant VM use vagrant ssh in the current directory"
-printf '\n\n To login to the Netbox-Demo web portal go to http://%s\n' "$CURRENTHOST"
-printf "\n\n Web portal superuser credentials are admin / admin"
+printf "\n COMPLETE: NetBox-Demo Provisioning COMPLETE!!"
+printf "\n To login to the Vagrant VM use vagrant ssh in the current directory"
+printf '\n To login to the Netbox-Demo web portal go to http://%s' "$CURRENTHOST"
+printf "\n Web portal superuser credentials are admin / admin"
