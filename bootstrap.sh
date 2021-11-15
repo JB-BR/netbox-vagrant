@@ -35,7 +35,7 @@ apt-get install python3 python3-dev python3-pip libxml2-dev libxslt1-dev libffi-
 printf "\n\n --------------------------------"
 printf "\n\n Step 6 of 19: Upgrading pip\n"
 #pip3 install --upgrade pip > /dev/null
-pip3 install --upgrade pip==9.0.3 > /dev/null
+pip3 install --upgrade pip > /dev/null
 
 # Install gunicorn & supervisor
 printf "\n\n --------------------------------"
@@ -60,7 +60,7 @@ cp /opt/netbox/netbox/netbox/configuration.example.py /opt/netbox/netbox/netbox/
 # Update configuration.py with database user, database password, netbox generated SECRET_KEY, & Allowed Hosts
 sed -i "s/'USER': '',  /'USER': 'netbox',  /g" /opt/netbox/netbox/netbox/configuration.py
 sed -i "s/'PASSWORD': '',  /'PASSWORD': 'J5brHrAXFLQSif0K',  /g" /opt/netbox/netbox/netbox/configuration.py
-sed -i "s/ALLOWED_HOSTS \= \[\]/ALLOWED_HOSTS \= \['netbox.internal.local', 'netbox.localhost', 'localhost', '127.0.0.1'\]/g" /opt/netbox/netbox/netbox/configuration.py
+sed -i "s/ALLOWED_HOSTS \= \[\]/ALLOWED_HOSTS \= \['*'\]/g" /opt/netbox/netbox/netbox/configuration.py
 SECRET_KEY=$( python3 /opt/netbox/netbox/generate_secret_key.py )
 sed -i "s~SECRET_KEY = ''~SECRET_KEY = '$SECRET_KEY'~g" /opt/netbox/netbox/netbox/configuration.py
 # Clear SECRET_KEY variable
@@ -69,15 +69,51 @@ unset SECRET_KEY
 # Setup apache, gunicorn, & supervisord config using premade examples (need to change netbox-setup)
 printf "\n\n --------------------------------"
 printf "\n\n Step 11 of 19: Configuring nginx..."
-cp /vagrant/nginx-netbox.example /etc/nginx/sites-available/netbox
+
+cat <<EOT >> /tmp/netbox-nginx.conf
+server {
+    listen 80;
+
+    client_max_body_size 25m;
+
+    location /static/ {
+        alias /opt/netbox/netbox/static/;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header X-Forwarded-Host \$http_host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+}
+EOT
+sudo cp /tmp/netbox-nginx.conf /etc/nginx/sites-available/netbox
+rm /tmp/netbox-nginx.conf
 
 printf "\n\n --------------------------------"
 printf "\n\n Step 12 of 19: Configuring gunicorn..."
-cp /vagrant/gunicorn_config.example.py /opt/netbox/gunicorn_config.py
+cat <<EOT >> /tmp/netbox-gunicorn.conf
+command = '/usr/bin/gunicorn'
+pythonpath = '/opt/netbox/netbox'
+bind = '127.0.0.1:8001'
+workers = 3
+user = 'www-data'
+EOT
+sudo cp /tmp/netbox-gunicorn.conf /opt/netbox/gunicorn_config.py
+rm /tmp/netbox-gunicorn.conf
 
 printf "\n\n --------------------------------"
 printf "\n\n Step 13 of 19: Configuring supervisor..."
-cp /vagrant/supervisord-netbox.example.conf /etc/supervisor/conf.d/netbox.conf
+cat <<EOT >> /tmp/netbox-supervisor.conf
+[program:netbox]
+command = gunicorn -c /opt/netbox/gunicorn_config.py netbox.wsgi
+directory = /opt/netbox/netbox/
+user = www-data
+EOT
+sudo cp /tmp/netbox-supervisor.conf /etc/supervisor/conf.d/netbox.conf
+rm /tmp/netbox-supervisor.conf
 
 # Apache Setup (enable the proxy and proxy_http modules, and reload Apache)
 printf "\n\n --------------------------------"
@@ -117,8 +153,9 @@ pip3 install napalm
 chown -R www-data /opt/netbox/netbox/media/image-attachments/
 
 # Status Complete
+read -r CURRENTHOST _ < <(hostname -I)
+
 printf "%s\nCOMPLETE: NetBox-Demo Provisioning COMPLETE!!"
 printf "%s\nTo login to the Vagrant VM use vagrant ssh in the current directory"
-printf "%s\nSee NAPALM and Netbox documentation to get NAPALM working with Netbox and your environment"
-printf "%s\nTo login to the Netbox-Demo web portal go to http://netbox.localhost:8080"
+printf '%s\nTo login to the Netbox-Demo web portal go to http://%s\n' "$CURRENTHOST"
 printf "%s\nWeb portal superuser credentials are admin / admin"

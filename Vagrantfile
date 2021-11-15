@@ -5,9 +5,6 @@ Vagrant.configure("2") do |config|
   config.vm.box = "generic/ubuntu2104"
   config.vm.hostname = "Netbox"
 
-  # Make Netbox reachable for the host over https://localhost:4433
-  config.vm.network :forwarded_port, guest: 80, host: 8080, id: 'https'
-
   # Enable provisioning with a shell script. 
   config.vm.provision :shell, path: "bootstrap.sh"
 
