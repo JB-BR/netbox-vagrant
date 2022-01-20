@@ -29,7 +29,7 @@ apt-get install nginx -y > /dev/null
 # Install Python
 printf "\n\n --------------------------------"
 printf "\n\n Step 5 of 19: Installing Python 3 dependencies..."
-apt-get install python3 python3-dev python3-pip libxml2-dev libxslt1-dev libffi-dev graphviz libpq-dev libssl-dev redis-server -y > /dev/null
+apt-get install python3 python3-pip python3-venv python3-dev build-essential libxml2-dev libxslt1-dev libffi-dev libpq-dev libssl-dev zlib1g-dev -y > /dev/null
 
 # Upgrade pip
 printf "\n\n --------------------------------"
@@ -51,7 +51,7 @@ git clone -b master https://github.com/digitalocean/netbox.git /opt/netbox
 # Install NetBox requirements
 printf "\n\n --------------------------------"
 printf "\n\n Step 9 of 19: Installing NetBox requirements..."
-pip3 install -r /opt/netbox/requirements.txt > /dev/null
+pip3 install -r /opt/netbox/requirements.txt --ignore-installed > /dev/null
 
 # Use configuration.example.py to create configuration.py
 printf "\n\n --------------------------------"
